@@ -1,0 +1,22 @@
+{
+	"name": "irclog",
+	"author": "Vladimir Dronnikov <dronnikov@gmail.com>",
+	"contributors": [],
+	"keywords": [
+		"node",
+		"irc",
+		"mongo",
+		"log",
+		"logger"
+	],
+	"version": "0.0.1",
+	"directories" : { "lib" : "./lib" },
+	"main" : "irclog.js",
+	"engines": { "node": ">= 0.1.102" },
+	"dependencies": {
+		"mongodb": ""
+	},
+	"githubName": "irclog",
+	"type": "zip",
+	"location": "http://github.com/dvv/irclog/zipball/master"
+}

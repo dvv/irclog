@@ -1,0 +1,19 @@
+{
+	"irc": {
+		"nick": "ddddd",
+		"//password": "ddddd",
+		"channels": [
+			"#persevere"
+		],
+		"host": "irc.freenode.net",
+		"port": 6667
+	},
+	"db": {
+		"host": "127.0.0.1",
+		"port": 27017,
+		"name": "test",
+		"table": "irc"
+	},
+	"// dump formatted lines to stdout?": "",
+	"print": true
+}
