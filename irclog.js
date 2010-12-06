@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 var fs = require('fs'),
 	net = require('net'),
 	mongo = require('mongodb');

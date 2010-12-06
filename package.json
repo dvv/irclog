@@ -10,11 +10,13 @@
 		"logger"
 	],
 	"version": "0.0.1",
-	"directories" : { "lib" : "./lib" },
 	"main" : "irclog.js",
 	"engines": { "node": ">= 0.1.102" },
 	"dependencies": {
 		"mongodb": ""
+	},
+	"mappings": {
+		"mongodb": "jar:http://nodeload.github.com/christkv/node-mongodb-native/zipball/master!/lib/mongodb"
 	},
 	"githubName": "irclog",
 	"type": "zip",
