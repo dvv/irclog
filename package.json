@@ -4,19 +4,17 @@
 	"contributors": [],
 	"keywords": [
 		"node",
+		"coffee",
 		"irc",
 		"mongo",
 		"log",
 		"logger"
 	],
 	"version": "0.0.1",
-	"main" : "irclog.js",
-	"engines": { "node": ">= 0.1.102" },
+	"main" : "irclog.coffee",
+	"engines": { "node": ">= 0.3.0" },
 	"dependencies": {
-		"mongodb": ""
-	},
-	"mappings": {
-		"mongodb": "jar:http://nodeload.github.com/christkv/node-mongodb-native/zipball/master!/lib/mongodb"
+		"//just run ./install": ""
 	},
 	"githubName": "irclog",
 	"type": "zip",
