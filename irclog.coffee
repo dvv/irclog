@@ -57,12 +57,12 @@ server.on 'request', (req, res) ->
 sys = require 'util'
 parseUrl = require('url').parse
 serve = (req, res) ->
-	url = parseUrl req.url.substring(1), true
+	url = parseUrl req.url, true
 	console.log 'REQ', sys.inspect url
 	search = {}
 	meta =
 		limit: 100
-	channel = url.pathname.split('/')[0]
+	channel = url.pathname.substring(1).split('/')[0]
 	if channel
 		search.channel = channel
 	if url.query.q
@@ -71,7 +71,7 @@ serve = (req, res) ->
 			{author: re}
 			{text: re}
 		]
-	console.log 'QUERY', search, meta
+	console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
 	db.find config.db.table, search, meta, (err, docs) ->
 		console.log 'FOUND', err, docs
 		if err
