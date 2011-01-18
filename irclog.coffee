@@ -56,13 +56,17 @@ parseUrl = require('url').parse
 serve = (req, res) ->
 	url = parseUrl req.url, true
 	console.log 'REQ', sys.inspect url
-	db.find config.db.table,
-		$or: [
-			author: new RegExp url.query.q, 'i'
-			text: new RegExp url.query.q, 'i'
-		]
-	, (err, docs) ->
-		console.log 'FOUND',  err, docs
+	search = {}
+	if url.query.q
+		re = glob2re url.query.q
+		search = {
+			$or: [
+				{author: re}
+				{text: re}
+			]
+		}
+	db.find config.db.table, search, {limit: 100}, (err, docs) ->
+		console.log 'FOUND for ', re,  err, docs
 		if err
 			res.writeHead 403, 'content-type': 'text/plain'
 			res.end err.message or err
@@ -72,3 +76,9 @@ serve = (req, res) ->
 
 server.listen 8000
 console.log "HTTP server running at http://*:8000/. Use CTRL+C to stop."
+
+glob2re = (x) ->
+	s = decodeURIComponent(x).replace(/([\\|\||\(|\)|\[|\{|\^|\$|\*|\+|\?|\.|\<|\>])/g, (x) -> '\\'+x).replace(/\\\*/g,'.*').replace(/\\\?/g,'.?')
+	s = if s.substring(0,2) isnt '.*' then '^'+s else s.substring(2)
+	s = if s.substring(s.length-2) isnt '.*' then s+'$' else s.substring(0, s.length-2)
+	new RegExp s, 'i'
