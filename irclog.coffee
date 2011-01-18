@@ -48,25 +48,32 @@ server.on 'request', (req, res) ->
 	# serve static files, or invoke dynamic handler
 	if req.method is 'GET'
 		staticFileServer.serve req, res, (err, data) ->
-			#console.log "STATIC: #{req.url} == ", err
 			serve req, res if err?.status is 404
+	# other methods are noop, so far
+	else
+		res.writeHead 405
+		res.end()
 
 sys = require 'util'
 parseUrl = require('url').parse
 serve = (req, res) ->
-	url = parseUrl req.url, true
+	url = parseUrl req.url.substring(1), true
 	console.log 'REQ', sys.inspect url
 	search = {}
+	meta =
+		limit: 100
+	channel = url.pathname.split('/')[0]
+	if channel
+		search.channel = channel
 	if url.query.q
-		re = glob2re url.query.q
-		search = {
-			$or: [
-				{author: re}
-				{text: re}
-			]
-		}
-	db.find config.db.table, search, {limit: 100}, (err, docs) ->
-		console.log 'FOUND for ', re,  err, docs
+		re = glob2re '*' + url.query.q + '*'
+		search.$or = [
+			{author: re}
+			{text: re}
+		]
+	console.log 'QUERY', search, meta
+	db.find config.db.table, search, meta, (err, docs) ->
+		console.log 'FOUND', err, docs
 		if err
 			res.writeHead 403, 'content-type': 'text/plain'
 			res.end err.message or err
