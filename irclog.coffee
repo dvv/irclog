@@ -78,6 +78,9 @@ serve = (req, res) ->
 			{author: re}
 			{text: re}
 		]
+	# TODO: filter by date
+	# TODO: /CHANNEL|all/bydate/DATE
+	# TODO: /CHANNEL|all/byauthor/AUTHOR
 	#console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
 	db.find config.db.table, search, meta, (err, docs) ->
 		#console.log 'FOUND', err, docs
