@@ -61,7 +61,8 @@ serve = (req, res) ->
 	console.log 'REQ', sys.inspect url
 	search = {}
 	meta =
-		limit: 100
+		skip: str2num url.query.skip, 0
+		limit: str2num url.query.limit, 100, 100
 	channel = url.pathname.substring(1).split('/')[0]
 	if channel and channel isnt 'all'
 		search.channel = '#'+channel
@@ -71,7 +72,7 @@ serve = (req, res) ->
 			{author: re}
 			{text: re}
 		]
-	#console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
+	console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
 	db.find config.db.table, search, meta, (err, docs) ->
 		#console.log 'FOUND', err, docs
 		if err
@@ -79,10 +80,20 @@ serve = (req, res) ->
 			res.end err.message or err
 		else
 			res.writeHead 200, 'content-type': 'application/json'
+			docs.forEach (doc) ->
+				doc.id = doc._id
+				delete doc._id
 			res.end JSON.stringify docs
 
 server.listen 8000
 console.log "HTTP server running at http://*:8000/. Use CTRL+C to stop."
+
+str2num = (x, default, max) ->
+	x = +x
+	x = x is x and x or default
+	if max? and x > max
+		x = max
+	x
 
 glob2re = (x) ->
 	s = decodeURIComponent(x).replace(/([\\|\||\(|\)|\[|\{|\^|\$|\*|\+|\?|\.|\<|\>])/g, (x) -> '\\'+x).replace(/\\\*/g,'.*').replace(/\\\?/g,'.?')
