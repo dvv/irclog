@@ -57,22 +57,28 @@ server.on 'request', (req, res) ->
 sys = require 'util'
 parseUrl = require('url').parse
 serve = (req, res) ->
+	# parse URL
 	url = parseUrl req.url, true
 	console.log 'REQ', sys.inspect url
 	search = {}
+	# p parameter is page number
+	page = str2num url.query.p, 0
+	pageSize = 100 # hardcoded. dot.
 	meta =
-		skip: str2num url.query.skip, 0
-		limit: str2num url.query.limit, 100, 100
+		skip: page * pageSize
+		limit: pageSize
 	channel = url.pathname.substring(1).split('/')[0]
+	# 'all' channel means no channel filter
 	if channel and channel isnt 'all'
 		search.channel = '#'+channel
+	# q parameter is regexp to full-text search
 	if url.query.q
 		re = glob2re '*' + url.query.q + '*'
 		search.$or = [
 			{author: re}
 			{text: re}
 		]
-	console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
+	#console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
 	db.find config.db.table, search, meta, (err, docs) ->
 		#console.log 'FOUND', err, docs
 		if err
