@@ -63,17 +63,17 @@ serve = (req, res) ->
 	meta =
 		limit: 100
 	channel = url.pathname.substring(1).split('/')[0]
-	if channel
-		search.channel = channel
+	if channel and channel isnt 'all'
+		search.channel = '#'+channel
 	if url.query.q
 		re = glob2re '*' + url.query.q + '*'
 		search.$or = [
 			{author: re}
 			{text: re}
 		]
-	console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
+	#console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
 	db.find config.db.table, search, meta, (err, docs) ->
-		console.log 'FOUND', err, docs
+		#console.log 'FOUND', err, docs
 		if err
 			res.writeHead 403, 'content-type': 'text/plain'
 			res.end err.message or err
