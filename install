@@ -5,6 +5,7 @@ documentcloud/underscore/underscore.js:underscore.js
 douglascrockford/JSON-js/json2.js:json2.js
 documentcloud/backbone/backbone.js:backbone.js
 dvv/coffee-mongo/lib:mongo
+cloudhead/node-static/lib:static
 '
 
 lib=lib/node

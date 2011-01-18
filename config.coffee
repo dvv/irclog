@@ -3,10 +3,10 @@ module.exports =
 		nick: 'sucaba-' + (''+Math.random()).substr(2, 3)
 		'//password': 'ddddd'
 		channels: [
-			'#documentcloud'
-			'#persevere'
+			#'#documentcloud'
+			#'#persevere'
 			'#persevere1234'
-			'#openlgtv'
+			#'#openlgtv'
 		]
 		host: 'irc.freenode.net'
 		port: 6667

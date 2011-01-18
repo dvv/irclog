@@ -1,0 +1,375 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+
+	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<!-- encoding must be specified within the first 512 bytes www.whatwg.org/specs/web-apps/current-work/multipage/semantics.html#charset -->
+
+	<!-- meta element for compatibility mode needs to be before all elements except title & meta msdn.microsoft.com/en-us/library/cc288325(VS.85).aspx -->
+	<!-- Chrome Frame is only invoked if meta element for compatibility mode is within the first 1K bytes code.google.com/p/chromium/issues/detail?id=23003 -->
+
+	<title></title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!--  Mobile viewport optimized: j.mp/bplateviewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- CSS: implied media="all" -->
+	<link rel="stylesheet" href="css/main.css">
+	<!-- 960 grid -->
+	<link rel="stylesheet" href="css/960.css">
+	<!-- style -->
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/colorbox.css">
+
+	<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+	<script src="js/modernizr-1.6.min.js"></script>
+
+</head>
+
+<body class="container_16 clearfix">
+
+	<div id="errors" class="container_16 clearfix"></div>
+	<header id="header" class="container_16 clearfix"></header>
+	<nav id="nav" class="container_16 clearfix"></nav>
+	<div id="content" class="container_16 clearfix"></div>
+	<footer id="footer" class="container_16 clearfix"></footer>
+
+	<!-- Javascript at the bottom for fast page loading -->
+	<script type="text/javascript" data-main="js/main.js" src="js/requireplugins-jquery-1.4.4.js"></script>
+
+	<!--[if lt IE 7 ]>
+		<script> //fix any <img> or .png_bg background-images
+			$.getScript('js/dd_belatedpng.js',function(){DD_belatedPNG.fix('img, .png_bg');});
+		</script>
+	<![endif]-->
+
+<!-- bundled jQuery templates -->
+<script id="tmpl-notfound" type="text/x-jquery-tmpl">NO TEMPLATE</script>
+
+<script id="tmpl-errors" type="text/x-jquery-tmpl">
+	<% if (model.get('flash')) { %>
+	<div class="flash" style="background: #99FF99; border: 1px solid #00CC66">
+		<%=model.escape('flash')%>
+	</div>
+	<% } %>
+	<% if (model.has('error')) { %>
+	<div class="error" style="background: #FF9999; border: 1px solid #CC6666">
+		<%=model.escape('error')%>
+	</div>
+	<% } %>
+	<% if (model.get('errors')) { %>
+	<% _.each(model.get('errors'), function(error){ %>
+	<div class="error" style="background: #FF9999; border: 1px solid #CC6666">
+		<%= error.property %>:<%= error.message %>
+	</div>
+	<% }); %>
+	<% } %>
+</script>
+
+<script id="tmpl-simple-buttons" type="text/x-jquery-tmpl">
+	<button type="submit"><%=_.T('formSubmit')%></button>
+	<button type="reset"><%=_.T('formCancel')%></button>
+</script>
+
+<script id="tmpl-header" type="text/x-jquery-tmpl">
+	<div class="grid_12 alpha">
+		<a href="/#">Home</a>
+		<% if (user.id) { %>
+		<a href="/#admin">Admin</a>
+		<% } %>
+	</div>
+	<div class="grid_4 omega">
+		<% if (user.id) { %>
+		<%= user.type %>&nbsp;<a href="#" class="toggle"><%= user.name || user.email || user.id %>&nbsp;&nabla;</a>
+		<div style="display: none;">
+			<p><a href="#profile"><%=_.T('profileSettings')%></a>
+			<p><a href="#logout"><%=_.T('loginLogout')%></a>
+		</div>
+		<% } else { %>
+		<div>
+			<a href="#" class="toggle"><%=_.T('loginLogin')%></a>
+			<form id="login" class="modal" style="display: none;">
+				<input type="text" size="10" name="user" placeholder="<%=_.T('loginUsername')%>" />
+				<input type="password" size="10" name="pass" placeholder="<%=_.T('loginPassword')%>" />
+				<label><%=_.T('loginStaySigned')%><input type="checkbox" name="remember" /></label>
+				<div class="buttons"><%=_.partial('simple-buttons',{})%></div>
+			</form>
+			<!--a href="#signup" class="toggle"><%=_.T('loginSignup')%></a>
+			<form id="signup" class="modal" style="display: none;">
+				<input type="text" size="10" name="user" placeholder="<%=_.T('loginUsername')%>" />
+				<input type="password" size="10" name="pass" placeholder="<%=_.T('loginPassword')%>" />
+				<div class="buttons"><%=_.partial('simple-buttons',{})%></div>
+			</form-->
+		</div>
+		<% } %>
+	</div>
+</script>
+
+<script id="tmpl-footer" type="text/x-jquery-tmpl">
+	<div class="copyright grid_8 alpha">
+		&copy; 2010<% if (year !== '2010') { %>-<%=year%><% } %> Your company here
+	</div>
+	<div class="grid_8 omega">
+	</div>
+</script>
+
+<script id="tmpl-navigation" type="text/x-jquery-tmpl">
+	<% if (user.id && page === 'admin') { %>
+	<div class="menu grid_12 alpha">
+		<% _.each(schema, function(def, name){ if (typeof def == 'object') { %>
+		<a href="/#admin/<%=name%>"><%=_.T('navigationAdminEntity' + name)%></a>
+		<% } }); %>
+	</div>
+	<form id="search"><input class="grid_4 omega" type="search" /></form>
+	<% } %>
+</script>
+
+<script id="tmpl-home" type="text/x-jquery-tmpl">
+	<div class="grid_12 alpha">
+Lorem ipsum dolor sit amet <br>
+Consectetuer lacinia volutpat vestibulum id <br>
+Vitae nulla penatibus facilisi id <br>
+Nulla Ut consequat at consequat <br>
+Velit euismod Nullam auctor magna <br>
+Sem ipsum porttitor in Curabitur <br>
+Eu consectetuer nunc et Vestibulum <br>
+Pretium Aenean Vivamus lacus tortor <br>
+Quis Sed ipsum arcu metus <br>
+Id orci et Vestibulum tortor <br>
+Ut felis urna eros Curabitur <br>
+Sapien dolor Phasellus lorem Duis <br>
+Pellentesque at pretium lacus ornare <br>
+Cursus est risus hendrerit et <br>
+	</div>
+	<div class="grid_4 omega">
+	<form id="action-support-post-request">
+		<div class="form-field"><label>E-mail<input type="text" name="email" value="<%=user && user.email%>" /></label></div>
+		<div class="form-field"><label>Subject<input type="text" name="subject" /></label></div>
+		<div class="form-field"><label>Body<textarea name="body"></textarea></label></div>
+		<div class="form-field"><label>Captcha<input type="text" name="captcha" /></label></div>
+		<div class="buttons"><button type="submit"><%=_.T('homeSupportPostRequest')%></button></div>
+	</form>
+	</div>
+</script>
+
+<script id="tmpl-profile" type="text/x-jquery-tmpl">
+<div class="grid_8 omega">
+	<form id="action-profile-change-name">
+		<div class="form-field"><label>ID<input type="text" value="<%=user.escape('id')%>" readonly="readonly" /></label></div>
+		<div class="form-field"><label>Имя<input type="text" name="name" value="<%=user.escape('name')%>" /></label></div>
+		<div class="buttons"><button type="submit"><%=_.T('profileChangeName')%></button></div>
+	</form>
+	<form id="action-profile-change-email">
+		<div class="form-field"><label>E-mail<input type="text" name="email" value="<%=user.escape('email')%>" /></label></div>
+		<div class="buttons"><button type="submit"><%=_.T('profileChangeEmail')%></button></div>
+	</form>
+	<form id="action-profile-change-password">
+		<div class="form-field"><label>Старый пароль<input type="password" name="oldPassword" /></label></div>
+		<div class="form-field"><label>Новый пароль<input type="password" name="newPassword" /></label></div>
+		<div class="form-field"><label>Подтверждение пароля<input type="password" name="confirmPassword" /></label></div>
+		<div class="buttons"><button type="submit"><%=_.T('profileChangePassword')%></button></div>
+	</form>
+</div>
+</script>
+
+<script id="tmpl-admin" type="text/x-jquery-tmpl">
+	<div id="entity"></div>
+</script>
+
+<script id="tmpl-list" type="text/x-jquery-tmpl">
+	<div class="list-actions grid_3 alpha"><%=_.partial([name+'-actions', 'actions'],{data:{}})||'&nbsp;'%></div>
+	<div class="list grid_13 omega">
+		<% if (methods.update || methods.remove) { %>
+		<select class="actions">
+			<option></option>
+			<option value="all"><%=_.T('all')%></option>
+			<option value="none"><%=_.T('none')%></option>
+			<option value="toggle"><%=_.T('toggle')%></option>
+		</select>
+		<div id="inspector" class="list-item-inspector"></div>
+		<% } %>
+		<table id="list-<%=name%>">
+			<thead>
+				<tr>
+					<th></th>
+					<% _.each(props, function(prop, name){ %>
+					<th class="action-sort" rel="<%=name%>"<% if (query.sortObj[name]) { %>data-sort="<%=query.sortObj[name]%>"<% } %>><%=(_.T(name) || name)%><% if (query.sortObj[name]) { %>&nbsp;(<%=query.sortObj[name]%>)<% } %></th>
+					<% }); %>
+				</tr>
+				<tr>
+					<th><% if (methods.update || methods.remove) { %><input type="checkbox" class="action-select-all" /><% } %></th>
+					<% _.each(props, function(prop, name){ %>
+					<th>
+						<% if (prop.type === 'boolean') { %>
+						<select name="<%=name%>" type="search" data-type="<%=prop.type%>" class="filter">
+							<option value=""></option>
+							<option value="true"<% if (query.last[name] && query.last[name].args[1] === true) { %> selected="selected"<% } %>>Да</option>
+							<option value="false"<% if (query.last[name] && query.last[name].args[1] === false) { %> selected="selected"<% } %>>Нет</option>
+						</select>
+						<% } else { %>
+						<input type="search" name="<%=name%>" data-type="<%=prop.type%>" class="filter"<% if (query.last[name]) { %> value="<%=query.last[name].args[1]%>"<% } %> />
+						<% } %>
+					</th>
+					<% }); %>
+				</tr>
+			</thead>
+			<tbody class="action-select-list"><% items.each(function(item){ var id = item.id; %>
+				<tr class="action-select-row<% if (selected.indexOf(id) >= 0) { %> selected<% } %>" rel="<%=id%>">
+					<td class="actions"><% if (methods.update || methods.remove) { %><input type="checkbox" class="action-select" <% if (selected.indexOf(id) >= 0) { %>checked="checked"<% } %> /><% } %></td>
+					<% _.each(props, function(prop, name){ var val = item.escape(name); if (prop.type === 'date') val = (new Date(item.get(name))).toLocaleString(); %>
+					<td>
+					<% if (name === 'id') { %>
+						<a class="action-open" rel="<%=id%>" href="#<%=name%>/<%=id%>"><%=val%></a>
+					<% } else { %>
+						<%=val%>
+					<% } %>
+					</td>
+					<% }); %>
+				</tr>
+			<% }); %></tbody>
+			<tfoot></tfoot>
+		</table>
+		<% if (items.length) { %>
+		<p><%=_.T('displayingItems', +query.limit[1]+1, +query.limit[1]+items.length)%></p>
+		<% } else { %>
+		<p><%=_.T('displayingNone')%></p>
+		<% } %>
+		<div class="pager">
+			<% if (query.limit[1]) { %>
+			<a href="#" class="page-prev"><%=_.T('prev')%></a>
+			<% } %>
+			<% if (items.length >= query.limit[0]) { %>
+			<a href="#" class="page-next"><%=_.T('next')%></a>
+			<% } %>
+			<select class="action-limit">
+				<option value="<%=query.limit[0]%>"><%=query.limit[0]%></option>
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+			</select>
+		</div>
+	</div>
+</script>
+
+<script id="tmpl-form-buttons" type="text/x-jquery-tmpl">
+	<% if (data.id) { %>
+		<% if (methods.update) { %>
+			<button type="submit"><%=_.T('formSave')%></button>
+		<% } %>
+		<% if (methods.remove) { %>
+			<button class="action-remove"><%=_.T('formRemove')%></button>
+		<% } %>
+	<% } else if (ids.length > 1) { %>
+		<% if (methods.update) { %>
+			<button type="submit"><%=_.T('formUpdate')%></button>
+		<% } %>
+		<% if (methods.remove) { %>
+			<button class="action-remove"><%=_.T('formRemove')%></button>
+		<% } %>
+	<% } else if (methods.add) { %>
+		<button type="submit"><%=_.T('formAdd')%></button>
+	<% } %>
+</script>
+
+<script id="tmpl-Course-actions" type="text/x-jquery-tmpl">
+<ul class="">
+	<li><a href="#Course/fetch">Взять с хурренси</a></li>
+</ul>
+</script>
+
+<script id="tmpl-Course-form" type="text/x-jquery-tmpl">
+<form style="position1: fixed;">
+	<% if (ids.length < 2) { %>
+	<div class="form-field"><label>Валюта<input type="text" name="cur" value="<%=data.escape('cur')%>" /></label></div>
+	<% } %>
+	<div class="form-field"><label>Курс<input type="text" name="value" value="<%=data.escape('value')%>" /></label></div>
+	<div class="buttons"><%=_.partial(['form-buttons'],{data:data, ids: ids, methods: methods})%></div>
+</form>
+</script>
+
+<script id="tmpl-Language-form" type="text/x-jquery-tmpl">
+<form>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>ID<input type="text" name="id" /></label></div>
+	<% } %>
+	<div class="form-field"><label>Имя<input type="text" name="name" value="<%=data.escape('name')%>" /></label></div>
+	<div class="form-field"><label>Нацназвание<input type="text" name="localName" value="<%=data.escape('localName')%>" /></label></div>
+	<div class="buttons"><%=_.partial(['form-buttons'],{data:data, ids: ids, methods: methods})%></div>
+</form>
+</script>
+
+<script id="tmpl-Affiliate-actions" type="text/x-jquery-tmpl">
+<ul class="">
+	<li><a href="#Affiliate/hz">ХЗ что, но что-то могло бы быть</a></li>
+</ul>
+</script>
+
+<script id="tmpl-Affiliate-form" type="text/x-jquery-tmpl">
+<form class="clearfix">
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>ID<input type="text" name="id" /></label></div>
+	<% } %>
+	<div class="form-field"><label>Имя<input type="text" name="name" value="<%=data.escape('name')%>" /></label></div>
+	<div class="form-field"><label>E-mail<input type="text" name="email" value="<%=data.escape('email')%>" /></label></div>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>Пароль<input type="password" name="password" /></label></div>
+	<% } %>
+	<div class="form-field"><label>В строю?<select name="active"><option value="">---</option><option value="true"<% if (data.active) { %> selected="selected"<% } %>>Да</option><option value="false"<% if (data.active === false) { %> selected="selected"<% } %>>Нет</option></select></label></div>
+	<div class="buttons"><%=_.partial(['form-buttons'],{data:data, ids: ids, methods: methods})%></div>
+	<div>
+</form>
+</script>
+
+<script id="tmpl-Merchant-form" type="text/x-jquery-tmpl">
+<form>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>ID<input type="text" name="id" /></label></div>
+	<% } %>
+	<div class="form-field"><label>Имя<input type="text" name="name" value="<%=data.escape('name')%>" /></label></div>
+	<div class="form-field"><label>E-mail<input type="text" name="email" value="<%=data.escape('email')%>" /></label></div>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>Пароль<input type="password" name="password" /></label></div>
+	<% } %>
+	<div class="form-field"><label>В строю?<select name="active"><option value="">---</option><option value="true"<% if (data.active) { %> selected="selected"<% } %>>Да</option><option value="false"<% if (data.active === false) { %> selected="selected"<% } %>>Нет</option></select></label></div>
+	<div class="buttons"><%=_.partial(['form-buttons'],{data:data, ids: ids, methods: methods})%></div>
+</form>
+</script>
+
+<script id="tmpl-Admin-form1" type="text/x-jquery-tmpl">
+<form>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>ID<input type="text" name="id" /></label></div>
+	<% } %>
+	<div class="form-field"><label>Имя<input type="text" name="name" value="<%=data.escape('name')%>" /></label></div>
+	<div class="form-field"><label>E-mail<input type="text" name="email" value="<%=data.escape('email')%>" /></label></div>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>Пароль<input type="password" name="password" /></label></div>
+	<% } %>
+	<div class="form-field"><label>В строю?<select name="active"><option value="">---</option><option value="true"<% if (data.active) { %> selected="selected"<% } %>>Да</option><option value="false"<% if (data.active === false) { %> selected="selected"<% } %>>Нет</option></select></label></div>
+	<div class="buttons"><%=_.partial(['form-buttons'],{data:data, ids: ids, methods: methods})%></div>
+</form>
+</script>
+
+<script id="tmpl-form" type="text/x-jquery-tmpl">
+<form>
+	<% if (!ids.length) { %>
+	<div class="form-field"><label>ID<input type="text" name="id" /></label></div>
+	<% } %>
+	<%=obj2form(model.get('schema')[name].schema,data.toJSON(),null,name)%>
+	<div class="buttons"><%=_.partial(['form-buttons'],{data:data, ids: ids, methods: methods})%></div>
+</form>
+</script>
+
+
+
+</body>
+</html>

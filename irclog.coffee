@@ -38,3 +38,37 @@ conn.on 'data', (data) ->
 					console.log date + '\t' + author + '\t' + channel + '\t' + text
 				db.insert config.db.table, {date: date, channel: channel, author: author, text: text} #, (err, doc) -> console.log 'INSERTED', err, doc
 	buf = lines[0]
+
+# run HTTP server
+server = require('http').createServer()
+
+# setup static file server, if any
+staticFileServer = new (require('static/node-static').Server) 'public', cache: 3600
+server.on 'request', (req, res) ->
+	# serve static files, or invoke dynamic handler
+	if req.method is 'GET'
+		staticFileServer.serve req, res, (err, data) ->
+			#console.log "STATIC: #{req.url} == ", err
+			serve req, res if err?.status is 404
+
+sys = require 'util'
+parseUrl = require('url').parse
+serve = (req, res) ->
+	url = parseUrl req.url, true
+	console.log 'REQ', sys.inspect url
+	db.find config.db.table,
+		$or: [
+			author: new RegExp url.query.q, 'i'
+			text: new RegExp url.query.q, 'i'
+		]
+	, (err, docs) ->
+		console.log 'FOUND',  err, docs
+		if err
+			res.writeHead 403, 'content-type': 'text/plain'
+			res.end err.message or err
+		else
+			res.writeHead 200, 'content-type': 'application/json'
+			res.end JSON.stringify docs
+
+server.listen 8000
+console.log "HTTP server running at http://*:8000/. Use CTRL+C to stop."
