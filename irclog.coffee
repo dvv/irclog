@@ -88,9 +88,9 @@ serve = (req, res) ->
 server.listen 8000
 console.log "HTTP server running at http://*:8000/. Use CTRL+C to stop."
 
-str2num = (x, default, max) ->
+str2num = (x, def, max) ->
 	x = +x
-	x = x is x and x or default
+	x = x is x and x or def
 	if max? and x > max
 		x = max
 	x
