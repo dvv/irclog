@@ -1,5 +1,5 @@
 #!/usr/bin/env coffee
-'use strict';
+'use strict'
 
 require.paths.unshift __dirname + '/lib/node'
 
@@ -7,7 +7,7 @@ require.paths.unshift __dirname + '/lib/node'
 config = require './config.coffee'
 
 # connect to mongodb
-db = new (require('mongo').Database) config.db.url #name
+db = new (require('mongo').Database) config.db.url or config.db.name
 # index db
 db.index config.db.table, date: false, channel: false, author: false
 
@@ -26,7 +26,8 @@ conn.on 'data', (data) ->
 			if config.irc.password
 				@write 'PASS ' + config.irc.password + '\n'
 			@write 'USER ' + config.irc.nick + ' foo bar :Logger\n'
-			@write 'JOIN ' + config.irc.channels.join(' ') + '\n'
+			config.irc.channels.forEach (channel) =>
+				@write 'JOIN ' + channel + '\n'
 		else if line.indexOf('PING :') is 0
 			@write line.replace(/^PING/, 'PONG') + '\n'
 		else
