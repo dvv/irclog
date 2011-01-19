@@ -62,6 +62,7 @@ parseUrl = require('url').parse
 serve = (req, res) ->
 	# parse URL
 	url = parseUrl req.url, true
+	# TODO: decodeURIComponent to url.query!
 	console.log 'REQ', sys.inspect url
 	search = {}
 	# p parameter is page number

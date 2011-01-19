@@ -93,16 +93,17 @@
 <script id="tmpl-navigation" type="text/x-jquery-tmpl">
 	<div class="menu grid_12 alpha">
 		<a href="/#documentcloud">#documentcloud</a>
+		<a href="/#openlgtv">#openlgtv</a>
 	</div>
-	<form id="search"><input class="grid_4 omega" type="search" /></form>
+	<form class="grid_4 omega" id="search"><input style="display: block;" type="search" placeholder="Search..." value="<%=search%>" /></form>
 </script>
 
 <script id="tmpl-list" type="text/x-jquery-tmpl">
 	<div class="grid_12 alpha">
 	<ul class="list">
-	<% _.each(entity, function(item){ var id = item.id; %>
+	<% entity.each(function(item){ var id = item.id; %>
 		<li>
-			<%=item.escape('author')%>:<%=item.escape('text')%>
+			<%=item.escape('author')%>:&nbsp;<%=item.escape('text')%>
 		</li>
 	<% }); %>
 	</ul>

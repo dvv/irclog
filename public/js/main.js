@@ -132,19 +132,40 @@ var NavApp = Backbone.View.extend({
 	el: $('#nav'),
 	render: function(){
 		this.el.html(_.partial('navigation', model.toJSON()));
+		this.$('#search :input').focus();
+
+		// N.B. workaround: textchange event can not be delegated...
+		// reload the View after a 0.6 sec timeout elapsed after the last textchange event on filters
+		var self = this;
+		var timeout;
+		this.$('#search :input').bind('textchange', function(){
+			clearTimeout(timeout);
+			var $this = $(this);
+			timeout = setTimeout(function(){
+				model.set({search: $this.val()}, {silent: true});
+				self.reload();
+			}, 600);
+			return false;
+		});
+
 		return this;
 	},
 	events: {
-		'submit #search': 'search'
+		//'submit #search': 'search'
 	},
 	initialize: function(){
 		_.bindAll(this, 'render');
 		model.bind('change', this.render);
 	},
+	reload: function(){
+		var entity = model.get('entity');
+		location.href = '/#' + entity.url + '?q=' + model.get('search');
+		//encodeURIComponent(text);
+	},
 	search: function(e){
 		var text = $(e.target).find('input').val();
-		if (!text) return false;
-		alert('TODO SEARCH FOR ' + text);
+		//if (!text) return false;
+		//alert('TODO SEARCH FOR ' + text);
 		return false;
 	}
 });
@@ -164,6 +185,7 @@ var App = Backbone.View.extend({
 	initialize: function(){
 		_.bindAll(this, 'render');
 		model.bind('change', this.render);
+		model.get('entity').bind('refresh', this.render);
 	}
 });
 
@@ -177,31 +199,13 @@ var Controller = Backbone.Controller.extend({
 	initialize: function(){
 		// entity viewer
 		this.route(/^([^/?]+)(?:\?(.*))?$/, 'entity', function(name, query){
+			model.set({search: decodeURIComponent((query||'').substring(2))}, {silent: true});
 			var entity = model.get('entity');
 			entity.name = name;
 			entity.url = name;
 			//entity.query = RQL.Query(query);
 			console.log('ROUTE', arguments, entity);
 			//console.log('QUERY', name, query, entity);
-
-//require(['http://archonsoftware.com:8000/' + entity.url + '?callback=define' +  (query ? '&' + query : '')], function(posts){
-/*require(['/' + entity.url + '?callback=define' +  (query ? '&' + query : '')], function(posts){
-	console.log('JSONP', arguments);
-});*/
-
-/*$.ajax({
-	//url: 'http://archonsoftware.com:8000/' + entity.url + '?callback=define' +  (query ? '&' + query : ''),
-	url: 'http://archonsoftware.com:8000/' + entity.url + (query ? '?' + query : ''),
-	dataType: 'jsonp',
-	data: null,
-	success: function(posts){
-		console.log('JSONP', arguments);
-	},
-	complete: function(){
-		console.log('ERR', arguments);
-	}
-});*/
-
 			entity.fetch({
 				//url: entity.url + (query ? '?' + query : ''),
 				url: 'http://archonsoftware.com:8000/' + entity.url + (query ? '?' + query : ''),
@@ -230,7 +234,8 @@ var List = Backbone.Collection.extend({
 // central model -- global scope
 model = new Backbone.Model({
 	errors: [],
-	entity: new List()
+	entity: new List(),
+	search: ''
 });
 
 //
