@@ -1,16 +1,27 @@
 #!/bin/sh
 
 deps='
-documentcloud/underscore/underscore.js:underscore.js
-douglascrockford/JSON-js/json2.js:json2.js
-documentcloud/backbone/backbone.js:backbone.js
+#server
 dvv/coffee-mongo/lib:mongo
 cloudhead/node-static/lib:static
+#client
+Modernizr/Modernizr/modernizr.js:../../public/js/modernizr.js
+documentcloud/underscore/underscore.js:underscore.js
+documentcloud/underscore/underscore.js:../js/underscore.js
+douglascrockford/JSON-js/json2.js:../js/json2.js
+documentcloud/backbone/backbone.js:../js/backbone.js
+dvv/schema2form/index.js:../js/schema2form.js
 '
 
+# download dependencies
 lib=lib/node
-mkdir -p "$lib"
+jslib="$lib/../js"
+mkdir -p "$lib" "$jslib"
 for dep in $deps; do
+	# skip comments
+	case "$dep" in
+		\#*) continue ;;
+	esac
 	# parse definition
 	path=${dep%:*}
 	link=${dep##*:}
@@ -19,6 +30,7 @@ for dep in $deps; do
 	git=${path%%/*}
 	# fetch the package
 	echo link ${author}\'s $git to $link, path $path
+	#continue
 	if ! test -d git/${git}; then
 		#git clone https://github.com/${author}/${git}.git git/${git}
 		mkdir -p git/${git}
@@ -33,5 +45,32 @@ for dep in $deps; do
 		cd ../..
 	fi
 	# symlink entry point
-	test -e "$lib/$link" || ln -s "../../git/$path" "$lib/$link"
+	if test "Q$link" != 'Q'; then
+		test -e "$lib/$link" || ln -s "../../git/$path" "$lib/$link"
+	fi
 done
+
+# minify client-side scripts
+#cat \
+#	git/requirejs/require.js \
+#	git/requirejs/require/i18n.js \
+#	git/requirejs/require/order.js \
+#	git/requirejs/require/text.js \
+#> public/js/require.js
+#| build/jsmin > bundle.js
+
+cat \
+	$jslib/json2.js \
+	$jslib/es5-shim.js \
+	$jslib/underscore.js \
+	$jslib/underscore.string.js \
+	$jslib/backbone.js \
+	$jslib/schema2form.js \
+	$jslib/jquery.textchange.min.js \
+	$jslib/jquery.tokeninput.js \
+	$jslib/schema2form.js \
+	\
+> public/js/bundle.js
+#| build/jsmin > bundle.js
+
+#	$jslib/modernizr.js
