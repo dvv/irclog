@@ -77,45 +77,42 @@
 </script>
 
 <script id="tmpl-simple-buttons" type="text/x-jquery-tmpl">
-	<button type="submit"><%=_.T('formSubmit')%></button>
-	<button type="reset"><%=_.T('formCancel')%></button>
+<button type="submit"><%=_.T('formSubmit')%></button>
+<button type="reset"><%=_.T('formCancel')%></button>
 </script>
 
 <script id="tmpl-header" type="text/x-jquery-tmpl">
 </script>
 
 <script id="tmpl-footer" type="text/x-jquery-tmpl">
-	<div class="copyright grid_8 alpha">
-		&copy; 2011<% if (year !== '2011') { %>-<%=year%><% } %> dvv
-	</div>
-	<div class="grid_8 omega">
-	</div>
+<div class="grid_8 alpha">&nbsp;
+</div>
+<div class="copyright grid_8 omega">
+	&copy; 2011<% if (year !== '2011') { %>-<%=year%><% } %> dvv
+</div>
 </script>
 
 <script id="tmpl-navigation" type="text/x-jquery-tmpl">
-	<div class="clearfix">
+<div>
+	<p><a href="#refresh">Refresh</a></p>
 	<form id="search"><input type="search" placeholder="Search..." value="<%=search%>" /></form>
 	<ul class="menu">
-		<li><a href="/#documentcloud">#documentcloud</a></li>
-		<li><a href="/#openlgtv">#openlgtv</a></li>
+	<% _.each(channels, function(channel){ %>
+		<li><a href="/<%=channel%>"><%=channel%></a></li>
+	<% }); %>
 	</ul>
-	<div class="clearfix">&nbsp;</div>
-	<div>
+</div>
 </script>
 
 <script id="tmpl-list" type="text/x-jquery-tmpl">
-	<div class="clearfix">&nbsp;</div>
-	<div class="grid_12 alpha">
-	<ul class="list">
-	<% entity.each(function(item){ var id = item.id; %>
-		<li>
-			<%=item.escape('author')%>:&nbsp;<%=item.escape('text')%>
-		</li>
-	<% }); %>
-	</ul>
-	</div>
-	<div class="grid_4 omega">
-	</div>
+<h1>#<%=entity.name%></h1>
+<ul class="list">
+<% entity.each(function(item){ var id = item.id; %>
+	<li>
+		<%=item.escape('author')%>:&nbsp;<%=item.escape('text')%>
+	</li>
+<% }); %>
+</ul>
 </script>
 
 </body>

@@ -4,18 +4,60 @@
 require.paths.unshift __dirname + '/lib/node'
 
 # read configuration
-config = require './config.coffee'
+global.settings = require('./config')
+
+# define model
+run = require('simple').run
+store = require 'simple/store'
+Store = store.Store
+Model = store.Model
+Facet = store.Facet
+RestrictiveFacet = store.RestrictiveFacet
+PermissiveFacet = store.PermissiveFacet
+
+schema = {}
+model = {}
+facets = {}
+
+schema.log =
+	type: 'object'
+	properties:
+		channel:
+			type: 'string'
+		author:
+			type: 'string'
+		date:
+			type: 'date'
+		text:
+			type: 'string'
+
+model.log = Model 'irc', Store('irc'), {
+}
+
+facets.log = RestrictiveFacet model.log,
+	schema: schema.log
+
+wait waitAllKeys(model), () ->
+	# define the application
+	app = Compose.create require('events').EventEmitter, {
+		getSession: (req, res) ->
+			Object.freeze
+				context:
+					log: facets.log
+	}
+	# run the application
+	run app
 
 # connect to mongodb
-db = new (require('mongo').Database) config.db.url or config.db.name
+#db = new (require('mongo').Database) settings.database.url or settings.database.name
 # index db
-db.index config.db.table, date: false, channel: false, author: false
+#db.index settings.database.table, date: false, channel: false, author: false
 
 '''
 # connect to IRC server
 # TODO: proxy?!
 buf = ''
-conn = require('net').createConnection config.irc.port, config.irc.host
+conn = require('net').createConnection settings.irc.port, settings.irc.host
 #conn.on 'connect', ->
 conn.on 'data', (data) ->
 	#console.log ''+data
@@ -24,24 +66,25 @@ conn.on 'data', (data) ->
 	while lines.length > 1
 		line = lines.shift()
 		if line.indexOf('\*\*\* No Ident response') >= 0
-			@write 'NICK ' + config.irc.nick + '\n'
-			if config.irc.password
-				@write 'PASS ' + config.irc.password + '\n'
-			@write 'USER ' + config.irc.nick + ' foo bar :Logger\n'
-			config.irc.channels.forEach (channel) =>
+			@write 'NICK ' + settings.irc.nick + '\n'
+			if settings.irc.password
+				@write 'PASS ' + settings.irc.password + '\n'
+			@write 'USER ' + settings.irc.nick + ' foo bar :Logger\n'
+			settings.irc.channels.forEach (channel) =>
 				@write 'JOIN ' + channel + '\n'
 		else if line.indexOf('PING :') is 0
 			@write line.replace(/^PING/, 'PONG') + '\n'
 		else
 			# dump the line to DB
-			line.replace /:(\w+)![^\s]+ PRIVMSG (#\w+) :(.*)\r/, (string, author, channel, text) ->
+			line.replace /:(\w+)![^\s]+ PRIVMSG (#[\w\.]+) :(.*)\r/, (string, author, channel, text) ->
 				date = new Date().toISOString()
-				if config.print
+				if settings.print
 					console.log date + '\t' + author + '\t' + channel + '\t' + text
-				db.insert config.db.table, {date: date, channel: channel, author: author, text: text} #, (err, doc) -> console.log 'INSERTED', err, doc
+				db.insert settings.database.table, {date: date, channel: channel, author: author, text: text} #, (err, doc) -> console.log 'INSERTED', err, doc
 	buf = lines[0]
 '''
 
+'''
 # run HTTP server
 server = require('http').createServer()
 
@@ -82,11 +125,13 @@ serve = (req, res) ->
 			{author: re}
 			{text: re}
 		]
+	else
+		meta.sort = date: -1
 	# TODO: filter by date
 	# TODO: /CHANNEL|all/bydate/DATE
 	# TODO: /CHANNEL|all/byauthor/AUTHOR
 	#console.log 'QUERY', sys.inspect(search), sys.inspect(meta)
-	db.find config.db.table, search, meta, (err, docs) ->
+	db.find settings.database.table, search, meta, (err, docs) ->
 		#console.log 'FOUND', err, docs
 		if err
 			res.writeHead 403, 'content-type': 'text/plain'
@@ -96,7 +141,7 @@ serve = (req, res) ->
 			docs.forEach (doc) ->
 				doc.id = doc._id
 				delete doc._id
-			str = JSON.stringify posts: docs, channels: config.irc.channels
+			str = JSON.stringify posts: docs, channels: settings.irc.channels
 			res.end if url.query.callback then "#{url.query.callback}(#{str})" else str
 
 server.listen 8000
@@ -114,3 +159,4 @@ glob2re = (x) ->
 	s = if s.substring(0,2) isnt '.*' then '^'+s else s.substring(2)
 	s = if s.substring(s.length-2) isnt '.*' then s+'$' else s.substring(0, s.length-2)
 	new RegExp s, 'i'
+'''

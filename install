@@ -1,17 +1,36 @@
 #!/bin/sh
 
 deps='
-#server
-dvv/coffee-mongo/lib:mongo
-cloudhead/node-static/lib:static
-#client
-Modernizr/Modernizr/modernizr.js:../../public/js/modernizr.js
+cloudhead/eyes.js/lib/eyes.js:eyes.js
+kriszyp/promised-io/lib:promised-io
+dvv/json-schema:json-schema
+kriszyp/compose/lib/compose.js:compose.js
 documentcloud/underscore/underscore.js:underscore.js
 documentcloud/underscore/underscore.js:../js/underscore.js
+edtsech/underscore.string/lib/underscore.string.js:../js/underscore.string.js
+Modernizr/Modernizr/modernizr.js:../../public/js/modernizr.js
 douglascrockford/JSON-js/json2.js:../js/json2.js
+kriskowal/es5-shim/es5-shim.js:../js/es5-shim.js
 documentcloud/backbone/backbone.js:../js/backbone.js
 dvv/schema2form/index.js:../js/schema2form.js
-okbreathe/jquery_plugins:
+dvv/rql/lib:rql
+dvv/rql/lib:../js/rql
+felixge/node-formidable/lib/formidable:formidable
+maqr/node-xml2js/lib:xml2js
+astro/node-expat/build/default/node-expat.node:node-expat.node
+Poetro/node-xml2js-expat/lib/xml2js.js:xml2js.js
+tautologistics/node-htmlparser/lib/htmlparser.js:htmlparser.js
+isaacs/sax-js/lib/sax.js:sax.js
+dvv/coffee-mongo/lib:mongo
+dvv/simple/lib:simple
+mranney/node_redis:redis
+cloudhead/node-static/lib:static
+jed/cookie-node/index.js:cookie.js
+bentomas/node-mime:mime
+3rd-eden/node-useragent/useragent.js:useragent.js
+weaver/node-mail/lib/mail:mail
+miksago/node-websocket-server/lib:ws-server
+learnboost/socket.io-node:io
 '
 
 # download dependencies
@@ -52,13 +71,6 @@ for dep in $deps; do
 done
 
 # minify client-side scripts
-#cat \
-#	git/requirejs/require.js \
-#	git/requirejs/require/i18n.js \
-#	git/requirejs/require/order.js \
-#	git/requirejs/require/text.js \
-#> public/js/require.js
-#| build/jsmin > bundle.js
 
 cat \
 	$jslib/json2.js \

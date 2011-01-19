@@ -151,7 +151,8 @@ var NavApp = Backbone.View.extend({
 		return this;
 	},
 	events: {
-		//'submit #search': 'search'
+		//'submit #search': 'search',
+		'click a[href=#refresh]': 'reload'
 	},
 	initialize: function(){
 		_.bindAll(this, 'render');
@@ -161,6 +162,7 @@ var NavApp = Backbone.View.extend({
 		var entity = model.get('entity');
 		location.href = '/#' + entity.url + '?q=' + model.get('search');
 		//encodeURIComponent(text);
+		return false;
 	},
 	search: function(e){
 		var text = $(e.target).find('input').val();
@@ -195,30 +197,36 @@ var App = Backbone.View.extend({
 var Controller = Backbone.Controller.extend({
 	routes: {
 		// url --> handler
+		//refresh: 'refresh'
 	},
 	initialize: function(){
 		// entity viewer
 		this.route(/^([^/?]+)(?:\?(.*))?$/, 'entity', function(name, query){
+			var self = this;
 			model.set({search: decodeURIComponent((query||'').substring(2))}, {silent: true});
 			var entity = model.get('entity');
 			entity.name = name;
 			entity.url = name;
-			//entity.query = RQL.Query(query);
-			console.log('ROUTE', arguments, entity);
+			entity.query = query;//RQL.Query(query);
+			//console.log('ROUTE', arguments, entity);
 			//console.log('QUERY', name, query, entity);
-			entity.fetch({
-				//url: entity.url + (query ? '?' + query : ''),
-				url: 'http://archonsoftware.com:8000/' + entity.url + (query ? '?' + query : ''),
-				dataType: 'jsonp',
-				error: function(x, xhr, y){
-					entity.refresh();
-					model.set({error: xhr.responseText});
-				},
-				success: function(data){
-					model.set({errors: []});
-					console.log('FETCHED', data);
-				}
-			});
+			self.refresh();
+		});
+	},
+	refresh: function(){
+		var entity = model.get('entity');
+		entity.fetch({
+			//url: entity.url + (entity.query ? '?' + entity.query : ''),
+			url: 'http://archonsoftware.com:8000/' + entity.url + (entity.query ? '?' + entity.query : ''),
+			dataType: 'jsonp',
+			error: function(x, xhr, y){
+				entity.refresh();
+				model.set({error: xhr.responseText});
+			},
+			success: function(data){
+				model.set({errors: []});
+				//console.log('FETCHED', data);
+			}
 		});
 	}
 });
@@ -227,13 +235,15 @@ var Controller = Backbone.Controller.extend({
 
 var List = Backbone.Collection.extend({
 	parse: function parse(data){
-		return data.data;
+		model.set({channels: data.channels}, {silent: true});
+		return data.posts;
 	}
 });
 
 // central model -- global scope
 model = new Backbone.Model({
 	errors: [],
+	channels: [],
 	entity: new List(),
 	search: ''
 });
