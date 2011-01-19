@@ -174,7 +174,7 @@ var NavApp = Backbone.View.extend({
 // #content application
 //
 var App = Backbone.View.extend({
-	el: $('#content'),
+	el: $('#list'),
 	render: function(){
 		console.log('RENDER', model.toJSON());
 		$(this.el).html(_.partial('list', model.toJSON()));

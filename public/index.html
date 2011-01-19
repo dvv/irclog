@@ -38,8 +38,10 @@
 
 	<div id="errors" class="container_16 clearfix"></div>
 	<header id="header" class="container_16 clearfix"></header>
-	<nav id="nav" class="container_16 clearfix"></nav>
-	<div id="content" class="container_16 clearfix"></div>
+	<div id="content" class="container_16 clearfix">
+		<article id="list" class="grid_12 alpha"></article>
+		<nav id="nav" class="grid_4 omega"></nav>
+	</div>
 	<footer id="footer" class="container_16 clearfix"></footer>
 
 	<!-- Javascript at the bottom for fast page loading -->
@@ -91,14 +93,18 @@
 </script>
 
 <script id="tmpl-navigation" type="text/x-jquery-tmpl">
-	<div class="menu grid_12 alpha">
-		<a href="/#documentcloud">#documentcloud</a>
-		<a href="/#openlgtv">#openlgtv</a>
-	</div>
-	<form class="grid_4 omega" id="search"><input style="display: block;" type="search" placeholder="Search..." value="<%=search%>" /></form>
+	<div class="clearfix">
+	<form id="search"><input type="search" placeholder="Search..." value="<%=search%>" /></form>
+	<ul class="menu">
+		<li><a href="/#documentcloud">#documentcloud</a></li>
+		<li><a href="/#openlgtv">#openlgtv</a></li>
+	</ul>
+	<div class="clearfix">&nbsp;</div>
+	<div>
 </script>
 
 <script id="tmpl-list" type="text/x-jquery-tmpl">
+	<div class="clearfix">&nbsp;</div>
 	<div class="grid_12 alpha">
 	<ul class="list">
 	<% entity.each(function(item){ var id = item.id; %>

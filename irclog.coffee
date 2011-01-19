@@ -96,7 +96,7 @@ serve = (req, res) ->
 			docs.forEach (doc) ->
 				doc.id = doc._id
 				delete doc._id
-			str = JSON.stringify data: docs
+			str = JSON.stringify posts: docs, channels: config.irc.channels
 			res.end if url.query.callback then "#{url.query.callback}(#{str})" else str
 
 server.listen 8000

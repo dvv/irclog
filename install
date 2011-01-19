@@ -11,6 +11,7 @@ documentcloud/underscore/underscore.js:../js/underscore.js
 douglascrockford/JSON-js/json2.js:../js/json2.js
 documentcloud/backbone/backbone.js:../js/backbone.js
 dvv/schema2form/index.js:../js/schema2form.js
+okbreathe/jquery_plugins:
 '
 
 # download dependencies

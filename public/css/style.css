@@ -3,10 +3,40 @@
 
 #header {
 	margin: 10px;
+	background-color: #ccc;
+	opacity: 0.5;
+}
+
+#content {
+	margin-top1: 30px;
+	height1: 400px;
+}
+
+#list {
+	margin-top1: 30px;
+	height1: 100%;
+	overflow-y1: scroll;
+}
+
+#nav {
+	padding: 7px;
+	background-color: #ccc;
+	opacity1: 0.5;
+	text-shadow: #eee 1px 1px 0;
+}
+
+#nav >div {
+	position: fixed;
 }
 
 #footer {
-	margin: 10px;
+	padding: 7px;
+}
+
+
+
+ul.list {
+	margin: 0;
 }
 
 ul.list li {
@@ -15,6 +45,7 @@ ul.list li {
 	border: 1px solid #aaa;
 	padding: 3px;
 	background-color: #ccc;
-	text-shadow1: 1px 1px 0 rgba(255,255,255,0.3);
-	text-shadow1: rgba(0,0,0,0.5) -1px 0, rgba(0,0,0,0.3) 0 -1px, rgba(255,255,255,0.5) 0 1px, rgba(0,0,0,0.3) -1px -1px;
+	color: #222;
+	text-shadow: #eee 1px 1px 0;
+	font-family: Verdana;
 }
