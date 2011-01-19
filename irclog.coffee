@@ -11,7 +11,9 @@ db = new (require('mongo').Database) config.db.url or config.db.name
 # index db
 db.index config.db.table, date: false, channel: false, author: false
 
+'''
 # connect to IRC server
+# TODO: proxy?!
 buf = ''
 conn = require('net').createConnection config.irc.port, config.irc.host
 #conn.on 'connect', ->
@@ -38,6 +40,7 @@ conn.on 'data', (data) ->
 					console.log date + '\t' + author + '\t' + channel + '\t' + text
 				db.insert config.db.table, {date: date, channel: channel, author: author, text: text} #, (err, doc) -> console.log 'INSERTED', err, doc
 	buf = lines[0]
+'''
 
 # run HTTP server
 server = require('http').createServer()
@@ -88,11 +91,12 @@ serve = (req, res) ->
 			res.writeHead 403, 'content-type': 'text/plain'
 			res.end err.message or err
 		else
-			res.writeHead 200, 'content-type': 'application/json'
+			res.writeHead 200, 'content-type': 'application/json; charset=utf-8'
 			docs.forEach (doc) ->
 				doc.id = doc._id
 				delete doc._id
-			res.end JSON.stringify docs
+			str = JSON.stringify data: docs
+			res.end if url.query.callback then "#{url.query.callback}(#{str})" else str
 
 server.listen 8000
 console.log "HTTP server running at http://*:8000/. Use CTRL+C to stop."

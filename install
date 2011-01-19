@@ -65,7 +65,6 @@ cat \
 	$jslib/underscore.js \
 	$jslib/underscore.string.js \
 	$jslib/backbone.js \
-	$jslib/schema2form.js \
 	$jslib/jquery.textchange.min.js \
 	$jslib/jquery.tokeninput.js \
 	$jslib/schema2form.js \
