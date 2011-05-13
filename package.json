@@ -4,15 +4,14 @@
 	"contributors": [],
 	"keywords": [
 		"node",
-		"coffee",
 		"irc",
 		"mongo",
 		"log",
 		"logger"
 	],
-	"version": "0.0.1",
-	"main" : "irclog.coffee",
-	"engines": { "node": ">= 0.3.0" },
+	"version": "0.0.2",
+	"main" : "irclog.js",
+	"engines": { "node": ">= 0.4.2" },
 	"dependencies": {
 		"//just run ./install": ""
 	},
